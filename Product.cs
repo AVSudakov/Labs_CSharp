@@ -2,14 +2,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
+using System.Xml.Serialization;
 namespace lab21
 {
-    class Product
+    [Serializable]
+    [XmlInclude(typeof(ElectronicProduct))]
+    [XmlInclude(typeof(FoodProduct))]
+    [XmlInclude(typeof(ShoeProduct))]
+    public abstract class Product
     {
         int fieldCount = 0;
         protected decimal fieldPrice;
-        virtual public decimal Price
+        public decimal Price
         {
             get { return fieldPrice; }
             set { fieldPrice = value; }
@@ -34,22 +38,26 @@ namespace lab21
             get;
             set;
         }
-        /*public ProductType Type
-        {
-            get;
-            set;
-        }*/
-        public Product(string ProductName)
+      public Product(string productName)
         {
             //Конструктор
-            Name = ProductName;
+            Name = productName;
+            this.Count=1;
         }
-        /*public Product(string ProductName, ProductType Type)
+      public Product()
+      {
+          //Конструктор
+          Name = "new_product";
+          Count = 1;
+      }
+        public Product(string productName, int count)
         {
             //Конструктор
-            Name = ProductName;
-            this.Type = Type;
-        }*/
-
+            Name = productName;
+            Count = count;
+        }
+         public abstract string GetProperty(string propertyName);
+         public abstract bool SetProperty(string propertyName, string value);
+         public abstract string[] GetAllProperties();
     }
 }

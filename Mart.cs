@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
+using System.Xml.Serialization;
 namespace lab21
 {
-    class Mart:IDepartmentsManagement
+    public class Mart:IDepartmentsManagement
     {
-        List<Department> Departments = new List<Department>();
+        public List<Department> Departments = new List<Department>();
         string fieldName;
+        [XmlAttribute(DataType="string",AttributeName="Name")] 
         public string Name
         {
             get { return fieldName; }
@@ -16,27 +17,41 @@ namespace lab21
         }
         public Mart()
         {
+            Name = "Универмаг №1";
             //Конструктор
         }
-         Department IDepartmentsManagement.AddDepartment(string DepartName,DepartmentType Type)
+         Department IDepartmentsManagement.AddDepartment(string departmentName,DepartmentType Type)
         {
-            Department Department = new Department(DepartName);
-            Department.Type = Type;
-            Departments.Add(Department);
+            Department Department = this.GetDepartment(departmentName);
+            if (Department == null)
+            {
+                Department = new Department(departmentName);
+                Department.Type = Type;
+                Departments.Add(Department);
+            }
+            else
+                return null;
             return Department;
         }
-         void IDepartmentsManagement.RemoveDepartment(string DepartName)
+         Department IDepartmentsManagement.RemoveDepartment(string departName)
         {
-            Departments.Remove(this.GetDepartment(DepartName));
+            Department MyDepartment = this.GetDepartment(departName);
+             if (MyDepartment != null)
+                 Departments.Remove(MyDepartment);
+             return MyDepartment;
         }
-        public Department GetDepartment(string DepartmentName)
+         public Department GetDepartment(string departName)
         {
             foreach (Department Department in Departments)
             {
-                if (Department.Name == DepartmentName)
+                if (Department.Name == departName)
                     return Department;
             }
             return null;
+        }
+        public Department[] GetAllDepartments()
+        {
+            return Departments.ToArray();
         }
     }
 }

@@ -5,11 +5,17 @@ using System.Text;
 
 namespace lab21
 {
-    class Department : IProductsManagement
+    [Serializable]
+    public class Department : IProductsManagement
     {
-        List<Product> Products = new List<Product>();
+        public List<Product> Products = new List<Product>();
         string fieldName;
         string fieldDirectorName;
+        public string Director
+        {
+            get { return fieldDirectorName; }
+            set { fieldDirectorName = value; }
+        }
         public DepartmentType Type
         {
             get;
@@ -20,27 +26,35 @@ namespace lab21
             get { return fieldName; }
             set { fieldName = value; }
         }
-        public Department(string DepartName)
+        public Department()
         {
-            fieldName = DepartName;
+            fieldName = "new_department";
+            //Конструктор
+        }
+        public Department(string departName)
+        {
+            fieldName = departName;
             //Конструктор
         }
 
-        Product IProductsManagement.AddProduct(string ProductName,ProductType Type)
+        Product IProductsManagement.AddProduct(string productName,ProductType Type)
         {
             Product NewProduct;
+            NewProduct = this.GetProduct(productName);
+            if (NewProduct != null)
+                NewProduct.Count++;
+            else
             switch (Type)
             {
                 case ProductType.Electronics:
-                    Products.Add(NewProduct = new ElectronicProduct(ProductName));
+                    Products.Add(NewProduct = new ElectronicProduct(productName));
                     break;
                 case ProductType.Food:
-                    NewProduct = null;
-                    //Products.Add(new FoodProduct(ProductName));
+                    Products.Add(NewProduct = new FoodProduct(productName));
                     break;
                 case ProductType.Shoes:
                     NewProduct = null;
-                    //Products.Add(new ShoeProduct(ProductName));
+                    Products.Add(NewProduct = new ShoeProduct(productName));
                     break;
                 default:
                     NewProduct = null;
@@ -48,24 +62,26 @@ namespace lab21
             }
             return NewProduct;
         }
-        Product IProductsManagement.RemoveProduct(string ProductName)
+        Product IProductsManagement.RemoveProduct(string productName)
         {
-            Product Product = GetProduct(ProductName);
-            Products.Remove(Product);
+            Product Product = GetProduct(productName);
+            if (Product.Count > 0)
+                Product.Count--;
+            else
+                Products.Remove(Product);
             return Product;
         }
-        public Product GetProduct(string ProductName)
+        public Product GetProduct(string productName)
         {
-            foreach (Product Product in Products)
-            {
-                if (Product.Name == ProductName)
-                    return Product;
-            }
-            return null;
+            return Products.FirstOrDefault(p => p.Name == productName);
+        }
+        public Product[] GetAllProducts()
+        {
+            return Products.ToArray();
         }
         override public string ToString()
         {
-            return (String.Format("Name = {0}, Price = {1}, Type = {2}", Name, fieldDirectorName, Type.ToString()));
+            return (String.Format("Name = {0}, Director = {1}, Type = {2}", Name, fieldDirectorName, Type.ToString()));
         }
     }
 }

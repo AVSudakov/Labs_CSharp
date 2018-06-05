@@ -8,6 +8,6 @@ namespace lab21
     interface IDepartmentsManagement
     {
         Department AddDepartment(string DepartmentName,DepartmentType Type);
-        void RemoveDepartment(string DepartmentName);
+        Department RemoveDepartment(string DepartmentName);
     }
 }
